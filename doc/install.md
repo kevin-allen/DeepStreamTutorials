@@ -37,6 +37,10 @@ It allows the container to use the host's X display and GPUs.
 
 Run `xhost +` before starting the container
 
+```
+xhost + local:docker
+```
+
 Mount the host's X11 display and map the DISPLAY variable to the docker container: `-v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY`
 
 For remote execution, install sshfs and openssh-client in the container.
