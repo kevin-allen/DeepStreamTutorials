@@ -81,7 +81,9 @@ If you have a usb camera.
 deepstream-app -c /opt/nvidia/deepstream/deepstream-6.1/samples/configs/deepstream-app/source1_usb_dec_infer_resnet_int8.txt
 ```
 
+## Install python bindings for DeepStrem
 
+The instructions can be found here: https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/tree/master/bindings
 
 
 
