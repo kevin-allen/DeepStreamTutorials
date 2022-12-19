@@ -12,4 +12,5 @@ DeepStream is working in the GStreamer framework. Here are a few advantages
 ## Documentation
 
 * [Installation](doc/install.md)
+* [Example applications](doc/example_apps.md)
 * [DeepStream learning material](doc/learning.md)
