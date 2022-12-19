@@ -1,6 +1,6 @@
 # DeepStreamTutorials
 
-DeepStreamTutorials contains a series of notebooks that explore how to run inference using the NVIDIA DeepStream SDK. 
+DeepStreamTutorials contains a series of python apps and notebooks that explore how to run inference using the NVIDIA DeepStream SDK. 
 
 DeepStream is working in the GStreamer framework. Here are a few advantages
 
