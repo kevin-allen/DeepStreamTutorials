@@ -1,5 +1,17 @@
 # Installation
 
+## Docker installation
+```
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo ap-get install -y curl
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker <your-user>
+sudo reboot
+```
+
+
 ## Docker containers download
 
 The recommended way to get going quickly is to use a DeepStream Docker container. 
