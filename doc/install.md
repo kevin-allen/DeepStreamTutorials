@@ -44,6 +44,17 @@ For remote execution, install sshfs and openssh-client in the container.
 ```
 docker run --gpus all -it --net=host --ipc=host -v /tmp/.X11-unix:/tmp/.X11-unix -v /var/run/docker.sock:/var/run/docker.sock -e DISPLAY=$DISPLAY --privileged -w /opt/nvidia/deepstream/deepstream-6.1  nvcr.io/nvidia/deepstream:6.1.1-devel
 ```
+
+### Test X display
+
+You can use xclock to test the X display from inside and outside the container.
+
+```
+apt-get install -y x11-apps
+xclock
+```
+
+
 ## Save modifications to a container
 
 This means that we don't have to always redo the installation steps when we launch the container.
