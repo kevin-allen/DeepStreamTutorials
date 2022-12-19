@@ -64,6 +64,26 @@ xclock
 gst-launch-1.0 videotestsrc ! videoconvert ! autovideosink
 ```
 
+## Test DeepStream
+
+We can use `deepstream-app` to run example of applications using DeepStream. If all goes well, a video should pop up showing the result of inference.
+
+
+To run inference from a video source
+
+```
+deepstream-app -c  /opt/nvidia/deepstream/deepstream-6.1/samples/configs/deepstream-app/source4_1080p_dec_infer-resnet_tracker_sgie_tiled_display_int8.txt
+```
+
+If you have a usb camera.
+
+```
+deepstream-app -c /opt/nvidia/deepstream/deepstream-6.1/samples/configs/deepstream-app/source1_usb_dec_infer_resnet_int8.txt
+```
+
+
+
+
 
 ## Save modifications to a container
 
@@ -74,3 +94,4 @@ docker ps -a
 docker commit CONTAINER_ID nvcr.io/nvidia/deepstream:6.1.1-devel-mod
 docker images
 ```
+
