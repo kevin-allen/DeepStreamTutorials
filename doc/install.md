@@ -58,6 +58,12 @@ apt-get install -y x11-apps
 xclock
 ```
 
+## Test gstreamer
+
+```
+gst-launch-1.0 videotestsrc ! videoconvert ! autovideosink
+```
+
 
 ## Save modifications to a container
 
