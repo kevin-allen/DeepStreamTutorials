@@ -85,7 +85,12 @@ deepstream-app -c /opt/nvidia/deepstream/deepstream-6.1/samples/configs/deepstre
 
 The instructions can be found here: https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/tree/master/bindings
 
+To test the installation
 
+```
+cd /opt/nvidia/deepstream/deepstream-6.1/sources/deepstream_python_apps/apps/deepstream-test1
+python3 deepstream_test_1.py /opt/nvidia/deepstream/deepstream-6.1/samples/streams/sample_720p.h264
+```
 
 ## Save modifications to a container
 
