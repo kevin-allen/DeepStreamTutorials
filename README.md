@@ -15,13 +15,14 @@ I used the example to put together a pipeline that will work for what I want to 
 I got started with my facetrack project.
 
 
-## Goals
+## To do next
 
-* Save video in a file of the captured video
+* Access output tensor from a python app.
+* Use openCV to get largest blob in tensors.
+* Save video in a file of the captured video.
 * Use data from 2 cameras.
 * Save tile video when using more than one camera.
-* Access output tensor from a python app and use openCV to get largest blob.
-* Save unet-tracker models as TensorRT engine to speed up start up.
+
 
 ## Start the docker container
 
