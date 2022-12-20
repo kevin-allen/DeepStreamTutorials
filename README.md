@@ -24,7 +24,10 @@ I got started with my facetrack project.
 
 ## List of apps
 
-* deepstream-facetrack: Run faceTrack unetTracker model on data from a webcam.
+#### deepstream-facetrack: 
+* Run faceTrack unetTracker model on data from a webcam.
+* `python3 deepstream_facetrack.py  dstest_segmentation_config_semantic.txt /dev/video0`
+
 
 ## Documentation
 
