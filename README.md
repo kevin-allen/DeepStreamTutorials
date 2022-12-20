@@ -26,7 +26,6 @@ I got started with my facetrack project.
 
 * deepstream-facetrack: Run faceTrack unetTracker model on data from a webcam.
 
-
 ## Documentation
 
 * [Installation](doc/install.md)
