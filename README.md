@@ -14,6 +14,7 @@ I used the apps provided with [DeepStream Python Bindings](https://github.com/NV
 I used the example to put together a pipeline that will work for what I want to do.
 I got started with my facetrack project.
 
+
 ## Goals
 
 * Save video in a file of the captured video
@@ -21,6 +22,12 @@ I got started with my facetrack project.
 * Save tile video when using more than one camera.
 * Access output tensor from a python app and use openCV to get largest blob.
 * Save unet-tracker models as TensorRT engine to speed up start up.
+
+## Start the docker container
+
+```
+docker run --gpus all -it --net=host --ipc=host -v /tmp/.X11-unix/:/tmp/.X11-unix -v /var/run/docker.sock:/var/run/docker.sock --device /dev/video0   -e DISPLAY=$DISPLAY --privileged -w /opt/nvidia/deepstream/deepstream-6.1 -v /home/kevin/repo:/home/kevin/repo nvcr.io/nvidia/deepstream:6.1.1-devel-mod
+```
 
 ## List of apps
 
