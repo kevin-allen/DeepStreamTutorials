@@ -20,7 +20,7 @@ I got started with my facetrack project.
 * Use data from 2 cameras.
 * Save tile video when using more than one camera.
 * Access output tensor from a python app and use openCV to get largest blob.
-
+* Save unet-tracker models as TensorRT engine to speed up start up.
 
 ## List of apps
 
