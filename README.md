@@ -9,7 +9,7 @@ DeepStream is working in the GStreamer framework. Here are a few advantages
 * Avoid sending data back and forth between CPU and GPU memory.
 * Application development can be done in Python, c++ and in Graph Composer
 
-My main aim was to be able to run unetTracker models within DeepStream.
+My main aim is to use unetTracker models within DeepStream to track objects in real-time settings.
 I used the apps provided with [DeepStream Python Bindings](https://github.com/NVIDIA-AI-IOT/deepstream_python_apps).
 I used the example to put together a pipeline that will work for what I want to do.
 I got started with my facetrack project.
