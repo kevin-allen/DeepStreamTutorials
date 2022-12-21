@@ -4,12 +4,12 @@ DeepStreamTutorials contains a series of python apps and notebooks that explore 
 
 DeepStream is working in the GStreamer framework. Here are a few advantages
 
-* Optimize inference speed.
-* No memory copies in the pipeline
+* Optimize inference speed on NVIDIA GPU using TensorRT.
+* Reduce the memory copies in the pipeline.
 * Avoid sending data back and forth between CPU and GPU memory.
-* Application development can be done in Python, c++ and in Graph Composer
+* Application development can be done in Python or c++.
 
-My main aim is to use unetTracker models within DeepStream to track objects in real-time settings.
+My main aim is to use [unetTracker models](https://github.com/kevin-allen/unetTracker) within DeepStream to track objects in real-time settings.
 I used the apps provided with [DeepStream Python Bindings](https://github.com/NVIDIA-AI-IOT/deepstream_python_apps).
 I used the example to put together a pipeline that will work for what I want to do.
 I got started with my facetrack project.
