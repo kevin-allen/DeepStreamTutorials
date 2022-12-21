@@ -19,7 +19,6 @@ I got started with my facetrack project.
 
 * Use openCV to get largest blob in tensors.
 * Save detected blob position in a tracking file.
-* Save video in a file of the captured video (higher resolution than what goes in the model).
 * Use data from 2 cameras.
 * Save tile video when using more than one camera.
 
