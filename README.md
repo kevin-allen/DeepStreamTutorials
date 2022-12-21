@@ -17,7 +17,6 @@ I got started with my facetrack project.
 
 ## To do next
 
-* Access output tensor from a python app.
 * Use openCV to get largest blob in tensors.
 * Save video in a file of the captured video.
 * Use data from 2 cameras.
