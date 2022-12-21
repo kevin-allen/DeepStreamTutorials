@@ -143,30 +143,30 @@ def seg_src_pad_buffer_probe(pad, info, u_data):
             # https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvinfer.html#tensor-metadata
             if user_meta and user_meta.base_meta.meta_type == pyds.NVDSINFER_TENSOR_OUTPUT_META:
                 try:
-                    print("Frame:", frame_number, ", Found our tensor output")
+                #    print("Frame:", frame_number, ", Found our tensor output")
                     tensor_meta = pyds.NvDsInferTensorMeta.cast(user_meta.user_meta_data)                   
-                    print("retrieved")
+                 #   print("retrieved")
                     
 
                 except StopIteration:
                     break
 
-                print("tensor_meta.num_output_layers:", tensor_meta.num_output_layers)
+               # print("tensor_meta.num_output_layers:", tensor_meta.num_output_layers)
                 # https://docs.nvidia.com/metropolis/deepstream/python-api/PYTHON_API/NvDsInfer/NvDsInferLayerInfo.html
                 output_layers_info = pyds.get_nvds_LayerInfo(tensor_meta,0)
                 
 
                 # https://docs.nvidia.com/metropolis/deepstream/python-api/PYTHON_API/NvDsInfer/NvDsInferDims.html#pyds.NvDsInferDims
-                print("dataType:",output_layers_info.dataType,
-                      ", inferDims.numDims:", output_layers_info.inferDims.numDims,
-                      ", inferDims.numElements:", output_layers_info.inferDims.numElements,
-                      ", inferDims.d:", output_layers_info.inferDims.d,
-                      ", layerName:",output_layers_info.layerName)
+                #print("dataType:",output_layers_info.dataType,
+                #      ", inferDims.numDims:", output_layers_info.inferDims.numDims,
+                #      ", inferDims.numElements:", output_layers_info.inferDims.numElements,
+                #      ", inferDims.d:", output_layers_info.inferDims.d,
+                #      ", layerName:",output_layers_info.layerName)
 
                 shp = output_layers_info.inferDims.d[:output_layers_info.inferDims.numDims]
                 ptr = ctypes.cast(pyds.get_ptr(output_layers_info.buffer), ctypes.POINTER(ctypes.c_float))
                 v = np.ctypeslib.as_array(ptr, shape=shp)
-                print("max:", v.reshape(4,-1).max(axis=1))
+                #print("max:", v.reshape(4,-1).max(axis=1))
                 
 
             try:
@@ -242,14 +242,6 @@ def main(args):
         sys.stderr.write(" Unable to create capsfilter \n")
 
 
-
-
-
-
-
-
-
-
         
     # Create nvstreammux instance to form batches from one or more sources.
     streammux = Gst.ElementFactory.make("nvstreammux", "Stream-muxer")
@@ -261,21 +253,75 @@ def main(args):
     if not seg:
         sys.stderr.write("Unable to create primary inferene\n")
 
-    # Create nvsegvisual for visualizing segmentation
-    nvsegvisual = Gst.ElementFactory.make("nvsegvisual", "nvsegvisual")
-    if not nvsegvisual:
-        sys.stderr.write("Unable to create nvsegvisual\n")
 
+    tee = Gst.ElementFactory.make("tee", "tee1")
+    if not tee:
+        sys.stderr.write(" Unable to create tee\n")
+
+
+    queue1 = Gst.ElementFactory.make("queue", "q1")
+    if not queue1:
+        sys.stderr.write(" Unable to create queue1\n")
+
+    queue2 = Gst.ElementFactory.make("queue", "q2")
+    if not queue2:
+        sys.stderr.write(" Unable to create queue2\n")
+    
+
+
+    # Create nvsegvisual for visualizing segmentation
+    #nvsegvisual = Gst.ElementFactory.make("nvsegvisual", "nvsegvisual")
+    #if not nvsegvisual:
+    #    sys.stderr.write("Unable to create nvsegvisual\n")
+    #sink_seg = Gst.ElementFactory.make("nveglglessink", "nvvideo-renderer-seg")
+    #if not sink_seg:
+    #    sys.stderr.write(" Unable to create egl sink_seg \n")
+
+    
+    nvosd = Gst.ElementFactory.make("nvdsosd", "onscreendisplay")
+    if not nvosd:
+        sys.stderr.write(" Unable to create nvosd \n")
+
+
+    sink_osd = Gst.ElementFactory.make("nveglglessink", "nvvideo-renderer-osd")
+    if not sink_osd:
+        sys.stderr.write(" Unable to create egl sink_seg \n")
+
+    
     if is_aarch64():
         transform = Gst.ElementFactory.make("nvegltransform", "nvegl-transform")
 
 
-    print("Creating EGLSink \n")
-    sink = Gst.ElementFactory.make("nveglglessink", "nvvideo-renderer")
-    if not sink:
-        sys.stderr.write(" Unable to create egl sink \n")
+    # elements needed to save a file
+    # nvvidconv !  'video/x-raw(memory:NVMM),width=480, height=480' ! nvv4l2h264enc  ! h264parse ! qtmux ! filesink  location="filename_h264.mp4"
 
     
+    nvvidconvposttee = Gst.ElementFactory.make("nvvideoconvert", "convertor_posttee")
+    if not nvvidconvposttee:
+        sys.stderr.write(" Unable to create Nvvideoconvert posttee \n")
+
+    caps_vidconvposttee = Gst.ElementFactory.make("capsfilter", "nvmm_caps_posttee")
+    if not caps_vidconvposttee:
+        sys.stderr.write(" Unable to create capsfilter posttee \n")
+
+    nvvenc = Gst.ElementFactory.make("nvv4l2h264enc", "enc")
+    if not nvvenc:
+        sys.stderr.write(" Unable to create nvvenc\n")
+
+    parse = Gst.ElementFactory.make("h264parse", "parse")
+    if not nvvenc:
+        sys.stderr.write(" Unable to create parse\n")
+    
+    mux =  Gst.ElementFactory.make("matroskamux", "mux")
+    if not mux:
+        sys.stderr.write(" Unable to create mux\n")
+    
+    file_sink =  Gst.ElementFactory.make("filesink", "fs")
+    if not file_sink:
+        sys.stderr.write(" Unable to create file_sink\n")
+    
+    
+        
     print("Playing video %s " % args[2])
 
 
@@ -298,11 +344,20 @@ def main(args):
               " with number of sources ", num_sources,
               " \n")
         seg.set_property("batch-size", num_sources)
-    nvsegvisual.set_property('batch-size', num_sources)
-    nvsegvisual.set_property('width', 640)
-    nvsegvisual.set_property('height', 480)
-    sink.set_property("qos", 0)
+    #nvsegvisual.set_property('batch-size', num_sources)
+    #nvsegvisual.set_property('width', 640)
+    #nvsegvisual.set_property('height', 480)
 
+    
+    caps_vidconvposttee.set_property('caps', Gst.Caps.from_string('video/x-raw(memory:NVMM),width=640, height=480'))
+    
+    sink_osd.set_property("qos", 0)
+
+
+    nvvenc.set_property('bitrate', 4000000)
+
+    
+    file_sink.set_property("location", "test.mp4")
 
     print("Adding elements to Pipeline \n")
 
@@ -315,8 +370,24 @@ def main(args):
 
     pipeline.add(streammux)
     pipeline.add(seg)
-    pipeline.add(nvsegvisual)
-    pipeline.add(sink)
+    pipeline.add(tee)
+    pipeline.add(queue1)
+    pipeline.add(queue2)
+    #pipeline.add(nvsegvisual)
+    # for display
+    pipeline.add(nvosd)
+    pipeline.add(sink_osd)
+
+    # for file 
+    pipeline.add(nvvidconvposttee)
+    pipeline.add(caps_vidconvposttee)
+    pipeline.add(nvvenc)
+    pipeline.add(parse)
+    pipeline.add(mux)
+    pipeline.add(file_sink)
+
+    
+    #pipeline.add(sink_seg)
     if is_aarch64():
         pipeline.add(transform)
 
@@ -344,12 +415,66 @@ def main(args):
 
 
     streammux.link(seg)
-    seg.link(nvsegvisual)
+    seg.link(tee)
+
+
+    tee_osd_pad = tee.get_request_pad('src_%u')
+    tee_file_pad = tee.get_request_pad("src_%u")    
+    if not tee_osd_pad or not tee_file_pad:
+        sys.stderr.write("Unable to get request tee pads\n")
+
+    sink_queue1_pad = queue1.get_static_pad('sink')
+    if not sink_queue1_pad:
+        sys.stderr.write("Unable to get request sink_queue1 pad\n")
+
+    sink_queue2_pad = queue2.get_static_pad('sink')
+    if not sink_queue2_pad:
+        sys.stderr.write("Unable to get request sink_queue2 pad\n")
+        
+
+        
+    #sink_nvsegvisual_pad = nvsegvisual.get_static_pad('sink')
+    #if not sink_nvsegvisual_pad:
+    #    sys.stderr.write("Unable to get request nvsegvisual pad\n")
+
+    tee_osd_pad.link(sink_queue1_pad)
+    queue1.link(nvosd)
+    #tee_seg_pad.link(sink_nvsegvisual_pad)
+    
+    
+    #tee.link(nvsegvisual)
+    #tee.link(nvosd)
+
+    
     if is_aarch64():
-        nvsegvisual.link(transform)
-        transform.link(sink)
+        nvosd.link(transform)
+        #nvsegvisual.link(transform)
+        transform.link(sink_osd)
+        #transform.link(sink_seg)
+        
     else:
-        nvsegvisual.link(sink)
+        #nvsegvisual.link(sink_seg)
+        nvosd.link(sink_osd)
+
+
+    # links to file
+
+    tee_file_pad.link(sink_queue2_pad)
+    queue2.link(nvvidconvposttee)
+    nvvidconvposttee.link(caps_vidconvposttee)
+    caps_vidconvposttee.link(nvvenc)
+    nvvenc.link(parse)
+    parse.link(mux)
+    mux.link(file_sink)
+
+
+
+
+
+
+
+
+        
     # create an event loop and feed gstreamer bus mesages to it
     loop = GLib.MainLoop()
     bus = pipeline.get_bus()
@@ -363,13 +488,6 @@ def main(args):
         sys.stderr.write(" Unable to get src pad \n")
     else:
         seg_src_pad.add_probe(Gst.PadProbeType.BUFFER, seg_src_pad_buffer_probe, 0)
-
-
-
-
-
-
-
 
     # List the sources
     print("Now playing...")
