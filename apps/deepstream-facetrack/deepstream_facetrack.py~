@@ -101,14 +101,22 @@ def seg_src_pad_buffer_probe(pad, info, u_data):
                     # The casting also keeps ownership of the underlying memory
                     # in the C code, so the Python garbage collector will leave
                     # it alone.
+
+                    
+                    tensor_meta = pyds.NvDsInferTensorMeta.cast(seg_user_meta.user_meta_data)                   
                     segmeta = pyds.NvDsInferSegmentationMeta.cast(seg_user_meta.user_meta_data)
+                    
                 except StopIteration:
                     break
                 # Retrieve mask data in the numpy format from segmeta
                 # Note that pyds.get_segmentation_masks() expects object of
                 # type NvDsInferSegmentationMeta
+
+                #print(tensor_meta.gpu_id)
+                
                 masks = pyds.get_segmentation_masks(segmeta)
                 masks = np.array(masks, copy=True, order='C')
+                #print("frame_number:", frame_number, ", mask shape:", masks.shape, ", mask range:", masks.min(),masks.max())
                 # map the obtained masks to colors of 2 classes.
                 #frame_image = map_mask_as_display_bgr(masks)
                 #cv2.imwrite(folder_name + "/" + str(frame_number) + ".jpg", frame_image)
@@ -242,8 +250,8 @@ def main(args):
               " \n")
         seg.set_property("batch-size", num_sources)
     nvsegvisual.set_property('batch-size', num_sources)
-    nvsegvisual.set_property('width', 512)
-    nvsegvisual.set_property('height', 512)
+    nvsegvisual.set_property('width', 640)
+    nvsegvisual.set_property('height', 480)
     sink.set_property("qos", 0)
 
 

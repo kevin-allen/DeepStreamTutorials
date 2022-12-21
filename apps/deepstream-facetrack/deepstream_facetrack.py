@@ -22,6 +22,7 @@ import sys
 sys.path.append('../')
 import gi
 import math
+import ctypes
 
 gi.require_version('Gst', '1.0')
 from gi.repository import GLib, Gst
@@ -60,23 +61,35 @@ def map_mask_as_display_bgr(mask):
 
 
 def seg_src_pad_buffer_probe(pad, info, u_data):
+    """
+    Function to access inference data output
+
+    There is two types of meta data
+    - segmentation (2D array with integer representing the segmentation image (classes id))
+    - tensor (raw output of the TensorRT inference engine)
+    """
+
+    
     gst_buffer = info.get_buffer()
     if not gst_buffer:
         print("Unable to get GstBuffer ")
         return
 
+    
     # Retrieve batch metadata from the gst_buffer
     # Note that pyds.gst_buffer_get_nvds_batch_meta() expects the
     # C address of gst_buffer as input, which is obtained with hash(gst_buffer)
     batch_meta = pyds.gst_buffer_get_nvds_batch_meta(hash(gst_buffer))
     l_frame = batch_meta.frame_meta_list
-    while l_frame is not None:
+    while l_frame is not None: # I presume we are looping over the frames in the batch
         try:
             # Note that l_frame.data needs a cast to pyds.NvDsFrameMeta
             # The casting is done by pyds.NvDsFrameMeta.cast()
             # The casting also keeps ownership of the underlying memory
             # in the C code, so the Python garbage collector will leave
             # it alone.
+
+            # https://docs.nvidia.com/metropolis/deepstream/python-api/PYTHON_API/NvDsMeta/NvDsFrameMeta.html
             frame_meta = pyds.NvDsFrameMeta.cast(l_frame.data)
         except StopIteration:
             break
@@ -89,10 +102,13 @@ def seg_src_pad_buffer_probe(pad, info, u_data):
                 # The casting also keeps ownership of the underlying memory
                 # in the C code, so the Python garbage collector will leave
                 # it alone.
-                seg_user_meta = pyds.NvDsUserMeta.cast(l_user.data)
+                user_meta = pyds.NvDsUserMeta.cast(l_user.data)
             except StopIteration:
                 break
-            if seg_user_meta and seg_user_meta.base_meta.meta_type == \
+
+
+            
+            if user_meta and user_meta.base_meta.meta_type == \
                     pyds.NVDSINFER_SEGMENTATION_META:
                 try:
                     # Note that seg_user_meta.user_meta_data needs a cast to
@@ -102,9 +118,9 @@ def seg_src_pad_buffer_probe(pad, info, u_data):
                     # in the C code, so the Python garbage collector will leave
                     # it alone.
 
-                    
-                    tensor_meta = pyds.NvDsInferTensorMeta.cast(seg_user_meta.user_meta_data)                   
-                    segmeta = pyds.NvDsInferSegmentationMeta.cast(seg_user_meta.user_meta_data)
+            
+                    #https://docs.nvidia.com/metropolis/deepstream/sdk-api/structNvDsInferSegmentationMeta.html
+                    segmeta = pyds.NvDsInferSegmentationMeta.cast(user_meta.user_meta_data)
                     
                 except StopIteration:
                     break
@@ -120,6 +136,39 @@ def seg_src_pad_buffer_probe(pad, info, u_data):
                 # map the obtained masks to colors of 2 classes.
                 #frame_image = map_mask_as_display_bgr(masks)
                 #cv2.imwrite(folder_name + "/" + str(frame_number) + ".jpg", frame_image)
+
+
+
+                
+            # https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvinfer.html#tensor-metadata
+            if user_meta and user_meta.base_meta.meta_type == pyds.NVDSINFER_TENSOR_OUTPUT_META:
+                try:
+                    print("Frame:", frame_number, ", Found our tensor output")
+                    tensor_meta = pyds.NvDsInferTensorMeta.cast(user_meta.user_meta_data)                   
+                    print("retrieved")
+                    
+
+                except StopIteration:
+                    break
+
+                print("tensor_meta.num_output_layers:", tensor_meta.num_output_layers)
+                # https://docs.nvidia.com/metropolis/deepstream/python-api/PYTHON_API/NvDsInfer/NvDsInferLayerInfo.html
+                output_layers_info = pyds.get_nvds_LayerInfo(tensor_meta,0)
+                
+
+                # https://docs.nvidia.com/metropolis/deepstream/python-api/PYTHON_API/NvDsInfer/NvDsInferDims.html#pyds.NvDsInferDims
+                print("dataType:",output_layers_info.dataType,
+                      ", inferDims.numDims:", output_layers_info.inferDims.numDims,
+                      ", inferDims.numElements:", output_layers_info.inferDims.numElements,
+                      ", inferDims.d:", output_layers_info.inferDims.d,
+                      ", layerName:",output_layers_info.layerName)
+
+                shp = output_layers_info.inferDims.d[:output_layers_info.inferDims.numDims]
+                ptr = ctypes.cast(pyds.get_ptr(output_layers_info.buffer), ctypes.POINTER(ctypes.c_float))
+                v = np.ctypeslib.as_array(ptr, shape=shp)
+                print("max:", v.reshape(4,-1).max(axis=1))
+                
+
             try:
                 l_user = l_user.next
             except StopIteration:
