@@ -1,6 +1,8 @@
 # DeepStreamTutorials
 
-DeepStreamTutorials contains a series of python apps and notebooks that explore how to run inference using the NVIDIA DeepStream SDK. 
+DeepStreamTutorials contains a series of python apps and notebooks that explore how to run inference using the NVIDIA DeepStream SDK.
+
+I use this repository to learn how to create gstreamer pipeline that include TensorRT models.
 
 DeepStream is working in the GStreamer framework. Here are a few advantages
 
