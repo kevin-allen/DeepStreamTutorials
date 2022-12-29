@@ -32,6 +32,18 @@ xhost + local:docker
 docker run --gpus all -it --net=host --ipc=host -v /tmp/.X11-unix/:/tmp/.X11-unix -v /var/run/docker.sock:/var/run/docker.sock --device /dev/video0   -e DISPLAY=$DISPLAY --privileged -w /opt/nvidia/deepstream/deepstream-6.1 -v /home/kevin/repo:/home/kevin/repo nvcr.io/nvidia/deepstream:6.1.1-devel-mod
 ```
 
+## Commit your change to a docker container
+
+Find the id of the image you are running and want to save.
+```
+docker ps
+```
+Comming the active image to file.
+```
+docker commit  e0b11bac9560 nvcr.io/nvidia/deepstream:6.1.1-devel-mod
+```
+
+
 ## Start a jupyter lab server
 
 ```
