@@ -32,6 +32,13 @@ xhost + local:docker
 docker run --gpus all -it --net=host --ipc=host -v /tmp/.X11-unix/:/tmp/.X11-unix -v /var/run/docker.sock:/var/run/docker.sock --device /dev/video0   -e DISPLAY=$DISPLAY --privileged -w /opt/nvidia/deepstream/deepstream-6.1 -v /home/kevin/repo:/home/kevin/repo nvcr.io/nvidia/deepstream:6.1.1-devel-mod
 ```
 
+## Start a jupyter lab server
+
+```
+ cd /home/kevin/repo
+ jupyter lab --allow-root --no-browser
+```
+
 ## List of apps
 
 #### apps/deepstream-facetrack: 
