@@ -278,11 +278,11 @@ def main(args):
     #    sys.stderr.write(" Unable to create egl sink_seg \n")
 
     
+    ## For the display
     nvosd = Gst.ElementFactory.make("nvdsosd", "onscreendisplay")
     if not nvosd:
         sys.stderr.write(" Unable to create nvosd \n")
-
-
+        
     sink_osd = Gst.ElementFactory.make("nveglglessink", "nvvideo-renderer-osd")
     if not sink_osd:
         sys.stderr.write(" Unable to create egl sink_seg \n")
@@ -296,6 +296,7 @@ def main(args):
     # nvvidconv !  'video/x-raw(memory:NVMM),width=480, height=480' ! nvv4l2h264enc  ! h264parse ! qtmux ! filesink  location="filename_h264.mp4"
 
     
+    #### for saving video 
     nvvidconvposttee = Gst.ElementFactory.make("nvvideoconvert", "convertor_posttee")
     if not nvvidconvposttee:
         sys.stderr.write(" Unable to create Nvvideoconvert posttee \n")
@@ -458,7 +459,6 @@ def main(args):
 
 
     # links to file
-
     tee_file_pad.link(sink_queue2_pad)
     queue2.link(nvvidconvposttee)
     nvvidconvposttee.link(caps_vidconvposttee)
@@ -466,9 +466,6 @@ def main(args):
     nvvenc.link(parse)
     parse.link(mux)
     mux.link(file_sink)
-
-
-
 
 
 

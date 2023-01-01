@@ -19,7 +19,7 @@ TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
 # The Onnx path is used for Onnx models.
 def build_engine_onnx(model_file):
     builder = trt.Builder(TRT_LOGGER)
-    network = builder.create_network( 1 << (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH) )
+    network = builder.create_network( 1 << (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     config = builder.create_builder_config()
     parser = trt.OnnxParser(network, TRT_LOGGER)
 
@@ -44,6 +44,12 @@ def main():
     # Build a TensorRT engine.
     engine = build_engine_onnx(onnx_model_file)
 
+    # Print information about the engine
+    inspector = engine.create_engine_inspector()
+    print(inspector.get_engine_information(trt.LayerInformationFormat.JSON))
+    
+    
+    
     engine_file="/home/kevin/repo/DeepStreamTutorials/models/serialized_UNet_engine.trt"
     with open(engine_file, "wb") as f:
         f.write(engine.serialize())
