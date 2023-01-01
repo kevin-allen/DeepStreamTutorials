@@ -1,6 +1,8 @@
 # DeepStreamTutorials
 
-DeepStreamTutorials contains a series of python apps and notebooks that explore how to run inference using the NVIDIA DeepStream SDK. 
+DeepStreamTutorials contains a series of python apps and notebooks that explore how to run inference using the NVIDIA DeepStream SDK.
+
+I use this repository to learn how to create gstreamer pipeline that include TensorRT models.
 
 DeepStream is working in the GStreamer framework. Here are a few advantages
 
@@ -19,7 +21,6 @@ I got started with my facetrack project.
 
 * Use openCV to get largest blob in tensors.
 * Save detected blob position in a tracking file.
-* Save video in a file of the captured video (higher resolution than what goes in the model).
 * Use data from 2 cameras.
 * Save tile video when using more than one camera.
 
@@ -29,6 +30,25 @@ I got started with my facetrack project.
 xhost + local:docker
 
 docker run --gpus all -it --net=host --ipc=host -v /tmp/.X11-unix/:/tmp/.X11-unix -v /var/run/docker.sock:/var/run/docker.sock --device /dev/video0   -e DISPLAY=$DISPLAY --privileged -w /opt/nvidia/deepstream/deepstream-6.1 -v /home/kevin/repo:/home/kevin/repo nvcr.io/nvidia/deepstream:6.1.1-devel-mod
+```
+
+## Commit your change to a docker container
+
+Find the id of the image you are running and want to save.
+```
+docker ps
+```
+Comming the active image to file.
+```
+docker commit  e0b11bac9560 nvcr.io/nvidia/deepstream:6.1.1-devel-mod
+```
+
+
+## Start a jupyter lab server
+
+```
+ cd /home/kevin/repo
+ jupyter lab --allow-root --no-browser
 ```
 
 ## List of apps
