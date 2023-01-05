@@ -21,8 +21,7 @@ I got started with my facetrack project.
 
 * Use openCV to get largest blob in tensors.
 * Save detected blob position in a tracking file.
-* Use data from 2 cameras.
-* Save tile video when using more than one camera.
+* Use data from 2 videos.
 
 ## Start the docker container
 
