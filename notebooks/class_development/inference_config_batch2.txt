@@ -65,7 +65,7 @@ offsets=127.3;117.5;121.7
 
 model-color-format=0
 #onnx-file=../../models/UNet.onnx
-model-engine-file=../../models/serialized_UNet_engine.trt
+model-engine-file=../../models/serialized_UNet_engine_batch2.trt
 
 
 #channel;height;width
@@ -73,7 +73,7 @@ infer-dims=3;480;640
 
 # how many images to run through the model at the same time
 # should be the same as the number of sources
-batch-size=1
+batch-size=2
 
 
 ## 0=FP32, 1=INT8, 2=FP16 mode

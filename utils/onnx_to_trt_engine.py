@@ -50,7 +50,7 @@ def main():
     
     
     
-    engine_file="/home/kevin/repo/DeepStreamTutorials/models/serialized_UNet_engine.trt"
+    engine_file="/home/kevin/repo/DeepStreamTutorials/models/serialized_UNet_engine_batch2.trt"
     with open(engine_file, "wb") as f:
         f.write(engine.serialize())
 

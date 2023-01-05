@@ -1,0 +1,34 @@
+# source settings
+source_number: 2
+source0_path: /dev/video0
+source0_type: usb
+source0_framerate: 10
+source0_width: 640
+source0_height: 480
+
+source1_path: /dev/video2
+source1_type: usb
+source1_framerate: 10
+source1_width: 640
+source1_height: 480
+
+# streammux settings
+streammux_width: 640
+streammux_height: 480
+streammux_batch-size: 1
+streammux_batched-push-timeout: 4000
+streammux_live-source: 1
+
+# path to inference config file
+inference_config_file: inference_config_batch2.txt
+
+
+# outputs of the pipeline
+output_number: 2
+output0_type: video_file
+output0_width: 640
+output0_height: 480
+output0_bitrate: 4000000
+output0_default-file-name: default_video.mp4
+
+output1_type: on-screen-display
